@@ -338,3 +338,13 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+# Unity specific
+Builds
+Library
+Logs
+obj
+Packages
+ProjectSettings
+Temp
+UnityPackageManager
