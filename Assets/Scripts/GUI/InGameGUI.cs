@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class InGameGUI : MonoBehaviour
 {
-
+    public bool hasCursor = true;
     public FirstPersonController userController;
     public GUISkin skin;
     public Texture normalCursor;
@@ -65,26 +65,29 @@ public class InGameGUI : MonoBehaviour
                     messageDisplayIndex++;
                 }
             }
-            // Draw appropriate cursor
-            switch (curCursor)
+            if (hasCursor)
             {
-                case CursorType.Normal:
-                    GUI.DrawTexture(new Rect((Screen.width / 2) - (normalCursor.width / 2),
-                                             (Screen.height / 2) - (normalCursor.height / 2),
-                                             normalCursor.width, normalCursor.height), normalCursor);
-                    break;
-                case CursorType.Use:
-                    GUI.DrawTexture(new Rect((Screen.width / 2) - (useCursor.width / 2),
-                                             (Screen.height / 2) - (useCursor.height / 2),
-                                             useCursor.width, useCursor.height), useCursor);
-                    break;
-                case CursorType.Converse:
-                    GUI.DrawTexture(new Rect((Screen.width / 2) - (converseCursor.width / 2),
-                                             (Screen.height / 2) - (converseCursor.height / 2),
-                            converseCursor.width, converseCursor.height), converseCursor);
-                    break;
-                case CursorType.None:
-                    break;
+                // Draw appropriate cursor
+                switch (curCursor)
+                {
+                    case CursorType.Normal:
+                        GUI.DrawTexture(new Rect((Screen.width / 2) - (normalCursor.width / 2),
+                                                 (Screen.height / 2) - (normalCursor.height / 2),
+                                                 normalCursor.width, normalCursor.height), normalCursor);
+                        break;
+                    case CursorType.Use:
+                        GUI.DrawTexture(new Rect((Screen.width / 2) - (useCursor.width / 2),
+                                                 (Screen.height / 2) - (useCursor.height / 2),
+                                                 useCursor.width, useCursor.height), useCursor);
+                        break;
+                    case CursorType.Converse:
+                        GUI.DrawTexture(new Rect((Screen.width / 2) - (converseCursor.width / 2),
+                                                 (Screen.height / 2) - (converseCursor.height / 2),
+                                converseCursor.width, converseCursor.height), converseCursor);
+                        break;
+                    case CursorType.None:
+                        break;
+                }
             }
         }
         else if (showMenu)
