@@ -3,23 +3,11 @@ using System.Collections.Generic;
 
 public class InGameGUI : MonoBehaviour
 {
-    public bool hasCursor = true;
-    public FirstPersonController userController;
     public GUISkin skin;
-    public Texture normalCursor;
-    public Texture converseCursor;
-    public Texture useCursor;
-    private List<UIMessage> messages;
-    private CursorType curCursor = CursorType.Normal;
-    public CursorType CurrentCursor
-    {
-        get { return curCursor; }
-        set { curCursor = value; }
-    }
-    private bool showMenu = false;
-    public bool ShowMenu { get { return showMenu; } set { showMenu = value; } }
+    protected List<UIMessage> messages;
 
-    public enum CursorType { Normal, Converse, Use, None }
+    protected bool showMenu = false;
+    public bool ShowMenu { get { return showMenu; } set { showMenu = value; } }
 
     void Awake()
     {
@@ -52,7 +40,7 @@ public class InGameGUI : MonoBehaviour
     {
         GUI.skin = skin;
         // If game is unpaused
-        if (!userController.LockMovement)
+        if (!showMenu)
         {
             // display UI messages
             int messageDisplayIndex = 1;
@@ -65,44 +53,19 @@ public class InGameGUI : MonoBehaviour
                     messageDisplayIndex++;
                 }
             }
-            if (hasCursor)
-            {
-                // Draw appropriate cursor
-                switch (curCursor)
-                {
-                    case CursorType.Normal:
-                        GUI.DrawTexture(new Rect((Screen.width / 2) - (normalCursor.width / 2),
-                                                 (Screen.height / 2) - (normalCursor.height / 2),
-                                                 normalCursor.width, normalCursor.height), normalCursor);
-                        break;
-                    case CursorType.Use:
-                        GUI.DrawTexture(new Rect((Screen.width / 2) - (useCursor.width / 2),
-                                                 (Screen.height / 2) - (useCursor.height / 2),
-                                                 useCursor.width, useCursor.height), useCursor);
-                        break;
-                    case CursorType.Converse:
-                        GUI.DrawTexture(new Rect((Screen.width / 2) - (converseCursor.width / 2),
-                                                 (Screen.height / 2) - (converseCursor.height / 2),
-                                converseCursor.width, converseCursor.height), converseCursor);
-                        break;
-                    case CursorType.None:
-                        break;
-                }
-            }
         }
-        else if (showMenu)
+        else
         {
             Debug.Log("Should be showing menu!");
-            userController.LockMovement = true;
             GUI.Window(0, new Rect((Screen.width / 2) - 400, (Screen.height / 2) - 250, 800, 500), MainMenu, "Menu");
         }
     }
-    void MainMenu(int id)
+    protected void MainMenu(int id)
     {
         Debug.Log("CallingMainMenu Method.");
         if (GUI.Button(new Rect(360, 470, 80, 20), "Resume"))
         {
-            userController.LockMovement = false; showMenu = false;
+           showMenu = false;
         }
     }
     // Adds a unique UIMessage to the messages list; sorts list by message priority

@@ -5,7 +5,7 @@ using System;
 public class Interactant : MonoBehaviour
 {
 
-    public InGameGUI inGameGUI;
+    public InGameGUIMotile inGameGUI;
     public Metabolism metabolism;
     public float selectionCastDistance = 1.7f;
     public Vector3 heldGameObjectOffset;
@@ -75,7 +75,7 @@ public class Interactant : MonoBehaviour
         }
         else if (selectedObject != null)
         {
-            inGameGUI.CurrentCursor = InGameGUI.CursorType.Normal;
+            inGameGUI.CurrentCursor = InGameGUIMotile.CursorType.Normal;
             selectedObject.IsSelected = false;
 
         }
@@ -117,15 +117,15 @@ public class Interactant : MonoBehaviour
     {
         if ((targetHit.transform.tag == "Usable") || (targetHit.transform.tag == "Holdable"))
         {
-            inGameGUI.CurrentCursor = InGameGUI.CursorType.Use;
+            inGameGUI.CurrentCursor = InGameGUIMotile.CursorType.Use;
         }
         else if (targetHit.transform.tag == "Conversable")
         {
-            inGameGUI.CurrentCursor = InGameGUI.CursorType.Converse;
+            inGameGUI.CurrentCursor = InGameGUIMotile.CursorType.Converse;
         }
         else
         {
-            inGameGUI.CurrentCursor = InGameGUI.CursorType.Normal;
+            inGameGUI.CurrentCursor = InGameGUIMotile.CursorType.Normal;
         }
     }
 

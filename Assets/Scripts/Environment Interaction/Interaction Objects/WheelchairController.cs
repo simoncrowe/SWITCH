@@ -15,7 +15,7 @@ public class WheelchairController : InteractionObject
 {
 
     public FirstPersonController userController;
-    public InGameGUI currentGUI;
+    public InGameGUIMotile currentGUI;
     public GameObject userControler;
     public GameObject userCamera;
     public GameObject pushingCollider;
@@ -53,7 +53,7 @@ public class WheelchairController : InteractionObject
                 pushingCollider.SetActive(true);
                 pushingCamera.SetActive(true);
                 userController.LockMovement = true;
-                currentGUI.CurrentCursor = InGameGUI.CursorType.None;
+                currentGUI.CurrentCursor = InGameGUIMotile.CursorType.None;
                 pushing = true;
             }
         }

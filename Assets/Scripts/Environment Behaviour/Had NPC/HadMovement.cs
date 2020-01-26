@@ -14,7 +14,7 @@ public class HadMovement : MonoBehaviour
     public Vector3 atChutesPosition;
     public Vector3 atSinkPosition;
     public Vector3 atStovePosition;
-    public Vector3 atWorkSurfacePosition;
+    public Vector3 atCupboardPosition;
     public Vector3 inFrontOfWheelchairPosition;
     public Vector3 toRightOfWheelchairPosition;
     public Vector3 behindWheelchairPosition;
@@ -36,7 +36,7 @@ public class HadMovement : MonoBehaviour
         EventManager.StartListening("move_had_to_chutes", MoveToChutes);
         EventManager.StartListening("move_had_to_sink", MoveToSink);
         EventManager.StartListening("move_had_to_stove", MoveToStove);
-        EventManager.StartListening("move_had_to_work_surface", MoveToWorkSurface);
+        EventManager.StartListening("move_had_to_cupboard", MoveToCupboard);
         EventManager.StartListening("move_had_in_front_of_wheelchair", MoveInFrontOfWheelchair);
         EventManager.StartListening("move_had_to_right_of_wheelchair", MoveToRightOfWheelchair);
         EventManager.StartListening("move_had_behind_wheelchair", MoveBehindWheelchair);
@@ -96,9 +96,9 @@ public class HadMovement : MonoBehaviour
                 {
                     EventManager.TriggerEvent("had_arrives_at_stove");
                 }
-                else if (position == atWorkSurfacePosition)
+                else if (position == atCupboardPosition)
                 {
-                    EventManager.TriggerEvent("had_arrives_at_work_surface");
+                    EventManager.TriggerEvent("had_arrives_at_cupboard");
                 }
                 else if (position == inFrontOfWheelchairPosition)
                 {
@@ -176,7 +176,7 @@ public class HadMovement : MonoBehaviour
         }
         futurePostions.Enqueue(atStovePosition);
     }
-    void MoveToWorkSurface()
+    void MoveToCupboard()
     {
         if ((transform.position == atDoorPosition) ||
             (transform.position == behindWheelchairPosition))
@@ -187,7 +187,7 @@ public class HadMovement : MonoBehaviour
         {
             futurePostions.Enqueue(inFrontOfWheelchairPosition);
         }
-        futurePostions.Enqueue(atWorkSurfacePosition);
+        futurePostions.Enqueue(atCupboardPosition);
     }
     void MoveInFrontOfWheelchair()
     {
@@ -203,7 +203,7 @@ public class HadMovement : MonoBehaviour
     }
     void MoveToRightOfWheelchair()
     {
-        if (transform.position == atWorkSurfacePosition)
+        if (transform.position == atCupboardPosition)
         {
             futurePostions.Enqueue(inFrontOfWheelchairPosition);
         }
