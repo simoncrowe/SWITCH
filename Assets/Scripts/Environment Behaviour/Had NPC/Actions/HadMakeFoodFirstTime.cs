@@ -102,24 +102,69 @@ public class HadMakeFoodFirstTime : MonoBehaviour
     void GetDicedRutabagaFromSurface()
     {
         EventManager.TriggerEvent("remove_diced_rutabada_from_cupboard");
-        Invoke("GetChoppedCeleryFromSurface", 1.25f);
+        Invoke("WalkToStoveWithDicedRutabaga", 1.25f);
     }
 
-    void GetChoppedCeleryFromSurface()
-    {
-        EventManager.TriggerEvent("remove_diced_rutabada_from_cupboard");
-        Invoke("WalkToStoveWithVegetables", 1.25f);
-    }
-
-    void WalkToStoveWithVegetables()
+    void WalkToStoveWithDicedRutabaga()
     {
         EventManager.TriggerEvent("move_had_to_stove");
-        EventManager.StartListening("had_arrived_at_stove", PutVegetablesInPot);
+        EventManager.StartListening("had_arrived_at_stove", PutDicedRutabagaInPot);
     }
 
-    void PutVegetablesInPot()
+    void PutDicedRutabagaInPot()
     {
-        EventManager.StopListening("had_arrived_at_stove", PutVegetablesInPot);
+        EventManager.StopListening("had_arrived_at_stove", PutDicedRutabagaInPot);
+        EventManager.TriggerEvent("add_diced_rutabaga_to_pot");
+        Invoke("WalkToCupboardToGetChoppedCelery", 0.4f);
+    }
 
+    void WalkToCupboardToGetChoppedCelery()
+    {
+        EventManager.TriggerEvent("move_had_to_cupboard");
+        EventManager.StartListening("had_arrived_at_cupboard", GetChoppedCeleryFromCupboard);
+    }
+
+    void GetChoppedCeleryFromCupboard()
+    {
+        EventManager.StopListening("had_arrived_at_cupboard", GetChoppedCeleryFromCupboard);
+        EventManager.TriggerEvent("remove_chopped_celery_from_cupboard");
+        Invoke("WalkToStoveWithCelery", 0.9f);
+    }
+
+    void WalkToStoveWithCelery()
+    {
+        EventManager.TriggerEvent("move_had_to_stove");
+        EventManager.StartListening("had_arrived_at_stove", PutChoppedCeleryInPot);
+    }
+
+    void PutChoppedCeleryInPot() { 
+        EventManager.StopListening("had_arrived_at_stove", PutChoppedCeleryInPot);
+        EventManager.TriggerEvent("add_diced_rutabaga_to_pot");
+        Invoke("WalkToChutedToGetCornflour", 0.5f);
+    }
+
+    void WalkToChutedToGetCornflour()
+    {
+        EventManager.TriggerEvent("move_had_to_chutes");
+        EventManager.StartListening("had_arrived_at_chutes", GetCornflourFronChutes);
+    }
+
+    void GetCornflourFronChutes()
+    {
+        EventManager.StopListening("had_arrived_at_chutes", GetCornflourFronChutes);
+        EventManager.TriggerEvent("remove_cornflour_from_chute");
+        Invoke("WalkToStoveWithCornflour", 0.5f);
+    }
+
+    void WalkToStoveWithCornflour()
+    {
+        EventManager.TriggerEvent("move_had_to_stove");
+        EventManager.StartListening("had_arrived_at_stove", PutCornflourInPot);
+    }
+
+    void PutCornflourInPot()
+    {
+        EventManager.StopListening("had_arrived_at_stove", PutCornflourInPot);
+        EventManager.TriggerEvent("play_drop_cornflour_in_pot_sound");
     }
 }

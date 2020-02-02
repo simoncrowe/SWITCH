@@ -25,7 +25,7 @@ public class PotInventory : MonoBehaviour
         if (!containsDicedRutabaga)
         {
             containsDicedRutabaga = true;
-            EventManager.TriggerEvent("put_diced_rutabaga_in_pot");
+            EventManager.TriggerEvent("play_drop_diced_rutabaga_in_pot_sound");
         }
         else
         {
@@ -37,7 +37,7 @@ public class PotInventory : MonoBehaviour
     {
         if (!containsChoppedCelery)
         {
-            EventManager.TriggerEvent("put_chopped_celery_in_pot");
+            EventManager.TriggerEvent("play_drop_chopped_celery_in_pot_sound");
             containsChoppedCelery = true;
         }
         else
@@ -80,7 +80,7 @@ public class PotInventory : MonoBehaviour
             {
                 if (containsCornflour || containsChoppedCelery || containsDicedRutabaga)
                 {
-                    EventManager.TriggerEvent("cook_stew");
+                    EventManager.TriggerEvent("play_pot_boiling_sound");
                     Invoke("FinishedCooking", 30f);
                 }
                 else
@@ -116,6 +116,6 @@ public class PotInventory : MonoBehaviour
     }
     void EatFromPot()
     {
-        EventManager.TriggerEvent("eat_from_pot");
+        EventManager.TriggerEvent("play_eat_from_pot_sound");
     }
 }

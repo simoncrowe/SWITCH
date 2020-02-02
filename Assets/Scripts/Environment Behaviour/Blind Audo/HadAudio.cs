@@ -11,7 +11,7 @@ public class HadAudio : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
 
-        EventManager.StartListening("eat_from_pot", PlayEatFromPot);
+        EventManager.StartListening("play_eat_from_pot_sound", PlayEatFromPot);
     }
 
     void PlayEatFromPot()
