@@ -50,7 +50,7 @@ public class PotInventory : MonoBehaviour
     {
         if (!containsCornflour)
         {
-            EventManager.TriggerEvent("put_cornflour_in_pot");
+            EventManager.TriggerEvent("play_drop_cornflour_in_pot_sound");
             containsCornflour = true;
         }
         else
@@ -103,6 +103,7 @@ public class PotInventory : MonoBehaviour
 
     void FinishedCooking()
     {
+        EventManager.TriggerEvent("contents_of_pot_is_cooked");
         contentsIsCooked = true;
     }
 

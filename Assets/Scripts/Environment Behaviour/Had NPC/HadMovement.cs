@@ -7,7 +7,6 @@ public class HadMovement : MonoBehaviour
     public float movementRate;
     public float minFootfallInterval;
     public float maxFootfallInterval;
-
     public AudioClip[] footfallSounds;
 
     public Vector3 atDoorPosition;
@@ -78,7 +77,6 @@ public class HadMovement : MonoBehaviour
             else
             {
                 var position = futurePostions.Dequeue();
-                Debug.Log("Finished moving towards " + position);
 
                 if (position == atDoorPosition)
                 {

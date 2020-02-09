@@ -1,25 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class HadEnterRoom : MonoBehaviour
 {
-    public float delayBeforeWalking = 1.5f;
+    public float delayBeforeWalking = 10f;
 
-    private float startWalkingTime;
-    private bool startedWalking = false;
 
     void Start()
     {
-        startWalkingTime = Time.time + delayBeforeWalking;
+        Invoke("StartWalking", delayBeforeWalking);
     }
 
-    void Update()
+    void StartWalking()
     {
-        if (!startedWalking && Time.time > startWalkingTime)
-        {
-            EventManager.TriggerEvent("move_had_in_front_of_wheelchair");
-            startedWalking = true;
-        }
+        EventManager.TriggerEvent("move_had_in_front_of_wheelchair");
     }
 }

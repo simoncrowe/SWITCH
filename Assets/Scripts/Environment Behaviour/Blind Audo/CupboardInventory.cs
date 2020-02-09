@@ -16,7 +16,7 @@ public class CupboardInventory : MonoBehaviour
         EventManager.StartListening("add_celery_to_cupboard", AddCelery);
         EventManager.StartListening("add_rutabaga_to_cupboard", AddRutabaga);
 
-        EventManager.StartListening("remove_diced_rutagada_from_cupboard", RemoveDicedRutabaga);
+        EventManager.StartListening("remove_diced_rutabaga_from_cupboard", RemoveDicedRutabaga);
         EventManager.StartListening("remove_chopped_celery_from_cupboard", RemoveChoppedCelery);
     }
     void AddRutabaga()

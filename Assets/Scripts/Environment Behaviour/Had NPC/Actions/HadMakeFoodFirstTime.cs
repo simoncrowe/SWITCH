@@ -12,7 +12,7 @@ public class HadMakeFoodFirstTime : MonoBehaviour
     
     void InitiateAction()
     {
-        Debug.Log("Initiated HadMakeFood.");
+        Debug.Log("Initiated HadMakeFoodFirstTime.");
         Invoke("GoToWorkSurface", 1f);
     }
 
@@ -34,14 +34,12 @@ public class HadMakeFoodFirstTime : MonoBehaviour
     {
         EventManager.TriggerEvent("open_top_drawer");
         Invoke("CloseTopDrawer", 1.5f);
-
     }
 
     void CloseTopDrawer()
     {
         EventManager.TriggerEvent("close_top_drawer");
         Invoke("CloseBottomDrawer", 0.3f);
-
     }
 
     void CloseBottomDrawer()
@@ -101,19 +99,19 @@ public class HadMakeFoodFirstTime : MonoBehaviour
 
     void GetDicedRutabagaFromSurface()
     {
-        EventManager.TriggerEvent("remove_diced_rutabada_from_cupboard");
+        EventManager.TriggerEvent("remove_diced_rutabaga_from_cupboard");
         Invoke("WalkToStoveWithDicedRutabaga", 1.25f);
     }
 
     void WalkToStoveWithDicedRutabaga()
     {
         EventManager.TriggerEvent("move_had_to_stove");
-        EventManager.StartListening("had_arrived_at_stove", PutDicedRutabagaInPot);
+        EventManager.StartListening("had_arrives_at_stove", PutDicedRutabagaInPot);
     }
 
     void PutDicedRutabagaInPot()
     {
-        EventManager.StopListening("had_arrived_at_stove", PutDicedRutabagaInPot);
+        EventManager.StopListening("had_arrives_at_stove", PutDicedRutabagaInPot);
         EventManager.TriggerEvent("add_diced_rutabaga_to_pot");
         Invoke("WalkToCupboardToGetChoppedCelery", 0.4f);
     }
@@ -121,12 +119,12 @@ public class HadMakeFoodFirstTime : MonoBehaviour
     void WalkToCupboardToGetChoppedCelery()
     {
         EventManager.TriggerEvent("move_had_to_cupboard");
-        EventManager.StartListening("had_arrived_at_cupboard", GetChoppedCeleryFromCupboard);
+        EventManager.StartListening("had_arrives_at_cupboard", GetChoppedCeleryFromCupboard);
     }
 
     void GetChoppedCeleryFromCupboard()
     {
-        EventManager.StopListening("had_arrived_at_cupboard", GetChoppedCeleryFromCupboard);
+        EventManager.StopListening("had_arrives_at_cupboard", GetChoppedCeleryFromCupboard);
         EventManager.TriggerEvent("remove_chopped_celery_from_cupboard");
         Invoke("WalkToStoveWithCelery", 0.9f);
     }
@@ -134,24 +132,24 @@ public class HadMakeFoodFirstTime : MonoBehaviour
     void WalkToStoveWithCelery()
     {
         EventManager.TriggerEvent("move_had_to_stove");
-        EventManager.StartListening("had_arrived_at_stove", PutChoppedCeleryInPot);
+        EventManager.StartListening("had_arrives_at_stove", PutChoppedCeleryInPot);
     }
 
     void PutChoppedCeleryInPot() { 
-        EventManager.StopListening("had_arrived_at_stove", PutChoppedCeleryInPot);
-        EventManager.TriggerEvent("add_diced_rutabaga_to_pot");
+        EventManager.StopListening("had_arrives_at_stove", PutChoppedCeleryInPot);
+        EventManager.TriggerEvent("add_chopped_celery_to_pot");
         Invoke("WalkToChutedToGetCornflour", 0.5f);
     }
 
     void WalkToChutedToGetCornflour()
     {
         EventManager.TriggerEvent("move_had_to_chutes");
-        EventManager.StartListening("had_arrived_at_chutes", GetCornflourFronChutes);
+        EventManager.StartListening("had_arrives_at_chutes", GetCornflourFronChutes);
     }
 
     void GetCornflourFronChutes()
     {
-        EventManager.StopListening("had_arrived_at_chutes", GetCornflourFronChutes);
+        EventManager.StopListening("had_arrives_at_chutes", GetCornflourFronChutes);
         EventManager.TriggerEvent("remove_cornflour_from_chute");
         Invoke("WalkToStoveWithCornflour", 0.5f);
     }
@@ -159,12 +157,90 @@ public class HadMakeFoodFirstTime : MonoBehaviour
     void WalkToStoveWithCornflour()
     {
         EventManager.TriggerEvent("move_had_to_stove");
-        EventManager.StartListening("had_arrived_at_stove", PutCornflourInPot);
+        EventManager.StartListening("had_arrives_at_stove", PutCornflourInPot);
     }
 
     void PutCornflourInPot()
     {
-        EventManager.StopListening("had_arrived_at_stove", PutCornflourInPot);
-        EventManager.TriggerEvent("play_drop_cornflour_in_pot_sound");
+        EventManager.StopListening("had_arrives_at_stove", PutCornflourInPot);
+        EventManager.TriggerEvent("add_cornflour_to_pot");
+        Invoke("CarryPotToSink", 0.4f);
+    }
+
+    void CarryPotToSink()
+    {
+        EventManager.TriggerEvent("move_had_to_sink");
+        EventManager.StartListening("had_arrives_at_sink", PutPotInSink);
+    }
+
+    void PutPotInSink()
+    {
+        EventManager.StopListening("had_arrives_at_sink", PutPotInSink);
+        EventManager.TriggerEvent("put_pot_in_sink");
+        Invoke("TurnOnTap", 0.6f);
+    }
+
+    void TurnOnTap()
+    {
+        EventManager.TriggerEvent("turn_on_tap");
+        EventManager.StartListening("tap_turned_on", WaitForPotToFillUp);
+    }
+
+    void WaitForPotToFillUp()
+    {
+        EventManager.StopListening("tap_turned_on", WaitForPotToFillUp);
+        Invoke("TurnOffTap", 10f);
+    }
+
+    void TurnOffTap()
+    {
+        EventManager.TriggerEvent("add_water_to_pot");
+        EventManager.TriggerEvent("turn_off_tap");
+        EventManager.StartListening("tap_turned_off", TakeFullPotBackToStove);
+    }
+
+    void TakeFullPotBackToStove()
+    {
+        EventManager.StopListening("tap_turned_off", TakeFullPotBackToStove);
+        EventManager.TriggerEvent("move_had_to_stove");
+        EventManager.StartListening("had_arrives_at_stove", PutPotOnStove);
+    }
+
+    void PutPotOnStove()
+    {
+        EventManager.StopListening("had_arrives_at_stove", PutPotOnStove);
+        EventManager.TriggerEvent("put_pot_on_stove");
+        Invoke("TurnOnHob", 0.75f);
+    }
+
+    void TurnOnHob()
+    {
+        EventManager.TriggerEvent("turn_on_hob");
+        Invoke("BoilPotContents", 1.5f);
+    }
+
+    void BoilPotContents()
+    {
+        EventManager.TriggerEvent("cook_contents_of_pot");
+        EventManager.StartListening("contents_of_pot_is_cooked", TurnOffHob);
+    }
+
+    void TurnOffHob()
+    {
+        EventManager.StopListening("contents_of_pot_is_cooked", TurnOffHob);
+        EventManager.TriggerEvent("turn_off_hob");
+        Invoke("TakeFoodToMan", 0.7f);
+    }
+
+    void TakeFoodToMan()
+    {
+        EventManager.TriggerEvent("move_had_in_front_of_wheelchair");
+        EventManager.StartListening("had_arrives_at_front_of_wheelchair", FeedMan);
+    }
+
+    void FeedMan()
+    {
+        EventManager.StopListening("had_arrives_at_front_of_wheelchair", FeedMan);
+
     }
 }
