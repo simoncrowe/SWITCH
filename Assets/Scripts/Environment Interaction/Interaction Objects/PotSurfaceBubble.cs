@@ -20,8 +20,8 @@ public class PotSurfaceBubble : RippleTexture {
 	}
 
     protected override void UpdateLogic() {
-        if ((Time.time > nextBubbleTime) && (pot.Temprature >= pot.waterSimmeringPoint)) {
-            float bubbleScale = (pot.Temprature - pot.waterSimmeringPoint) / (pot.waterBoilingPoint - pot.waterSimmeringPoint);
+        if ((Time.time > nextBubbleTime) && (pot.temprature >= pot.waterSimmeringPoint)) {
+            float bubbleScale = (pot.temprature - pot.waterSimmeringPoint) / (pot.waterBoilingPoint - pot.waterSimmeringPoint);
             float nextBubbleInterval = 1f / Mathf.Lerp((Random.Range(minBubbleRateBoiling, maxBubbleRateBoiling) * bubbleScale),
                                                         Random.Range(minBubbleRateBoiling, maxBubbleRateBoiling), 
                                                         bubbleIntervalScaleWeight);

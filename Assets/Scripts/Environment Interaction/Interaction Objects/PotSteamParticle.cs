@@ -15,12 +15,12 @@ public class PotSteamParticle : MonoBehaviour
 
     void Update()
     {
-        if (pot.Temprature > pot.waterSimmeringPoint && pot.occupiedVolume > 0)
+        if (pot.temprature > pot.waterSimmeringPoint && pot.occupiedVolume > 0)
         {
             if (!steamEmmissionModule.enabled) { steamEmmissionModule.enabled = true; }
             steamEmmissionModule.rate = new ParticleSystem.MinMaxCurve
                 (Mathf.Lerp(baseEmissionRate,
-                baseEmissionRate * ((pot.Temprature - pot.waterSimmeringPoint) / (pot.waterBoilingPoint - pot.waterSimmeringPoint)),
+                baseEmissionRate * ((pot.temprature - pot.waterSimmeringPoint) / (pot.waterBoilingPoint - pot.waterSimmeringPoint)),
                 potTempratureEmissionWeight));
         }
         else

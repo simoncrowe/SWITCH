@@ -9,7 +9,7 @@ public class Interactant : MonoBehaviour
     public Metabolism metabolism;
     public float selectionCastDistance = 1.7f;
     public Vector3 heldGameObjectOffset;
-
+    public float heldObjectThrowVelocity = 5f;
 
     private InteractionObject selectedObject;
     private HoldableObject heldInteractionObject;
@@ -255,7 +255,6 @@ public class Interactant : MonoBehaviour
 
     public void PickUpObject(HoldableObject objectToPickUp)
     {
-
         heldInteractionObject = objectToPickUp;
         heldInteractionObject.holdableObjectState = HoldableObjectStates.HeldByInteractant;
         heldInteractionObject.InteractantHasPickedUp();
@@ -282,7 +281,6 @@ public class Interactant : MonoBehaviour
     private void ReleaseHeldObject()
     {
         // ensure that the interactan's parent is still object's parent before unparenting.
-
         if (System.Object.ReferenceEquals(heldGameObject.transform.parent,
             this.gameObject.transform.parent.transform))
         {
@@ -290,16 +288,23 @@ public class Interactant : MonoBehaviour
             heldInteractionObject.holdableObjectState = HoldableObjectStates.Free;
             heldInteractionObject.InteractantHasDropped();
         }
+
         // Check whether held object can be dropped or should remain kinematic
         if (heldInteractionObject.canBeDropped)
         {
             heldGameObjectRigidBody.isKinematic = false;
+            Vector3 throwVector = (heldGameObject.transform.position + Vector3.up * 0.3f) 
+                                    - gameObject.transform.position;
+            heldGameObjectRigidBody.AddForce(throwVector.normalized * heldObjectThrowVelocity, 
+                                             ForceMode.VelocityChange);
         }
         heldMeshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
         heldGameObject.layer = 0;
+
         heldGameObject = null;
         heldGameObjectRigidBody = null;
         heldMeshRenderer = null;
+
         dropObjectMessage.SetShouldDiplay(false);
         consumeObjectMessage.SetShouldDiplay(false);
     }

@@ -32,7 +32,6 @@ public abstract class HoldableObject : InteractionObject {
 	public abstract InteractionResult InteractWith (InteractionObject targetObject);
 }
 
-
 public enum InteractionTypes: byte {None, Cut, Put, Place, Get, Give}
 public enum HoldableObjectStates: byte {Free, HeldByInteractant, HeldByObjectHolder}
 

@@ -5,7 +5,7 @@ using System;
 
 public class Pot : Food
 {
-    public float Temprature { get; private set; }     // Kelvin
+    public float temprature { get; private set; }     // Kelvin
 
     public float waterSimmeringPoint = 350f;
     public float waterBoilingPoint = 373.15f;
@@ -43,6 +43,12 @@ public class Pot : Food
     private bool halfEaten = false;
     private float contentsCookedness = 0;
 
+    void Start()
+    {
+        temprature = waterRoomTemprature;
+        surfaceColour = surfaceRenderer.material.color;
+    }
+
     public override void InteractantHasPickedUp()
     {
         potHolderSink.PotFilledByFaucet = false;
@@ -59,12 +65,12 @@ public class Pot : Food
 
     public override void InteractantHasConsumedHalfContents()
     {
-        throw new NotImplementedException();
+        liquidProportion *= 0.5f;
     }
 
     public override void InteractantHasConsumedAllContents()
     {
-        throw new NotImplementedException();
+        Empty();
     }
 
     float GetSolidIngredientVolume()
@@ -73,12 +79,6 @@ public class Pot : Food
         if (containsCelery) { solidIngredientVolume += celeryGameObject.GetComponent<ChoppedCelery>().ObjectVolume; }
         if (containsRutabaga) { solidIngredientVolume += rutabagaGameObject.GetComponent<DicedRutabaga>().ObjectVolume; }
         return solidIngredientVolume;
-    }
-
-    void Start()
-    {
-        Temprature = waterRoomTemprature;
-        surfaceColour = surfaceRenderer.material.color;
     }
 
     void Update()
@@ -90,34 +90,34 @@ public class Pot : Food
                 ObjectHolderHeatSource currentHeatSource = mostRecentObjectHolder as ObjectHolderHeatSource;
                 if (currentHeatSource.ThermalOutput > 0)
                 {
-                    if (Temprature < waterBoilingPoint)
+                    if (temprature < waterBoilingPoint)
                     {
                         // Heat transfer rate (W) * temprature gain resulting from heating contents of pot by 1 Jouls * duration of previous frame
-                        Temprature += (currentHeatSource.ThermalOutput * (0.239f / (occupiedVolume * 1e6f))) * Time.deltaTime;
+                        temprature += (currentHeatSource.ThermalOutput * (0.239f / (occupiedVolume * 1e6f))) * Time.deltaTime;
                     }
                 }
                 else
                 {
-                    if (Temprature > waterSimmeringPoint)
+                    if (temprature > waterSimmeringPoint)
                     {
-                        Temprature -= waterCoolingRate * Time.deltaTime;
+                        temprature -= waterCoolingRate * Time.deltaTime;
                     }
-                    else if (Temprature > waterRoomTemprature)
+                    else if (temprature > waterRoomTemprature)
                     {
-                        Temprature -= secondaryWaterCoolingRate * Time.deltaTime;
+                        temprature -= secondaryWaterCoolingRate * Time.deltaTime;
                     }
                 }
             }
         }
         else
         {
-            if (Temprature > waterSimmeringPoint)
+            if (temprature > waterSimmeringPoint)
             {
-                Temprature -= waterCoolingRate * Time.deltaTime;
+                temprature -= waterCoolingRate * Time.deltaTime;
             }
-            else if (Temprature > waterRoomTemprature)
+            else if (temprature > waterRoomTemprature)
             {
-                Temprature -= secondaryWaterCoolingRate * Time.deltaTime;
+                temprature -= secondaryWaterCoolingRate * Time.deltaTime;
             }
         }
 
@@ -128,7 +128,7 @@ public class Pot : Food
         }
         else if (containsCornflour || containsCelery || containsRutabaga)
         {
-            float cookednessAddend = Temprature - waterSimmeringPoint;
+            float cookednessAddend = temprature - waterSimmeringPoint;
             if (cookednessAddend > 0)
             {
                 // Low liquid proportion exponentially expedites burning  
@@ -200,17 +200,17 @@ public class Pot : Food
             objectName = "half-eaten " + objectName;
         }
 
-        if (Temprature > waterBoilingPoint)
+        if (temprature > waterBoilingPoint)
         {
             audioSource.volume = 0.5f;
         }
-        else if (Temprature > waterSimmeringPoint)
+        else if (temprature > waterSimmeringPoint)
         {
             if (!audioSource.isPlaying)
             {
                 audioSource.Play();
             }
-            audioSource.volume = (Temprature - waterSimmeringPoint) / (waterBoilingPoint - waterSimmeringPoint) * 0.5f;
+            audioSource.volume = (temprature - waterSimmeringPoint) / (waterBoilingPoint - waterSimmeringPoint) * 0.5f;
         }
         else
         {
@@ -235,6 +235,10 @@ public class Pot : Food
         {
             return InteractionTypes.Put;
         }
+        else if (targetObject is NPCInteraction)
+        {
+            return InteractionTypes.Give;
+        }
         else
         {
             return InteractionTypes.None;
@@ -258,7 +262,6 @@ public class Pot : Food
                 Consequence = InteractionConsequence.ReleaseHeldObject
             };
         }
-
         else if (targetObject is ObjectHolderSink)
         {
             ObjectHolderSink targetObjectHolder = targetObject as ObjectHolderSink;
@@ -270,11 +273,39 @@ public class Pot : Food
             transform.rotation = Quaternion.Euler(targetObjectHolder.heldObjectRotation);
             holdableObjectState = HoldableObjectStates.HeldByObjectHolder;
             mostRecentObjectHolder = targetObjectHolder;
+
             InteractionResult potPuttingResult = new InteractionResult();
             potPuttingResult.Message = "You put the pot in the " + targetObject.objectName + ".";
             potPuttingResult.Consequence = InteractionConsequence.ReleaseHeldObject;
             targetObjectHolder.PotFilledByFaucet = true;
             return potPuttingResult;
+        }
+        else if (targetObject is NPCInteraction)
+        {
+            InteractionResult ingestionResult = new InteractionResult();
+            NPCInteraction targetyNPCInteraction = targetObject as NPCInteraction;
+            ingestionResult.Consequence = InteractionConsequence.RetainHeldObject;
+            IngestionResult result = targetyNPCInteraction.NPCMetabolism.Ingest(this);
+            this.name = this.objectName;
+            switch (result)
+            {
+                case IngestionResult.IngestedAll:
+                    ingestionResult.Message = "You give the " + this.name + " to the " + targetObject.objectName + ".";
+                    targetyNPCInteraction.currentInteractionCLip = this.consumptionClip;
+                    targetyNPCInteraction.audioSource.PlayOneShot(targetyNPCInteraction.currentInteractionCLip, 1f);
+                    Empty();
+                    break;
+                case IngestionResult.IngestedHalf:
+                    ingestionResult.Message = "You give half the " + this.objectName + " to the " + targetObject.objectName + ".";
+                    targetyNPCInteraction.currentInteractionCLip = this.consumptionClip;
+                    targetyNPCInteraction.audioSource.PlayOneShot(targetyNPCInteraction.currentInteractionCLip, 0.8f);
+                    liquidProportion*= 0.5f;
+                    break;
+                case IngestionResult.IngestedNone:
+                    ingestionResult.Message = "The " + targetObject.objectName + " will not take the " + this.objectName + ".";
+                    break;
+            }
+            return ingestionResult;
         }
         else
         {
@@ -345,5 +376,21 @@ public class Pot : Food
         {
             return false;
         }
+    }
+
+    void Empty()
+    {
+        liquidProportion = 0;
+
+        GameObject.Destroy(celeryGameObject);
+        containsCelery = false;
+
+        GameObject.Destroy(rutabagaGameObject);
+        containsRutabaga = false;
+
+        surfaceColour = clearSurfaceColor;
+        containsCornflour = false;
+
+        contentsCookedness = 0;
     }
 }
