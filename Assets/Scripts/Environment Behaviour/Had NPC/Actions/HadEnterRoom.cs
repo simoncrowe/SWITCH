@@ -7,6 +7,9 @@ public class HadEnterRoom : MonoBehaviour
 
     void Start()
     {
+        // Resetting cursor state from scene 0
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         Invoke("StartWalking", delayBeforeWalking);
     }
 

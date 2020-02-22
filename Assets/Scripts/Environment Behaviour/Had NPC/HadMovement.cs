@@ -21,6 +21,9 @@ public class HadMovement : MonoBehaviour
 
     public Dialogue dialogue;
 
+    public GameObject hadCamera;
+    public GameObject wheelchair;
+
     private AudioSource audioSource;
     private Queue<Vector3> futurePostions;
     private float nextFootFall = 0f;
@@ -237,4 +240,6 @@ public class HadMovement : MonoBehaviour
         }
         futurePostions.Enqueue(toLeftOfWheelchairPosition);
     }
+
+
 }

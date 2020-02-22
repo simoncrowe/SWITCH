@@ -20,6 +20,7 @@ public class WheelchairController : InteractionObject
     public GameObject userCamera;
     public GameObject pushingCollider;
     public GameObject pushingCamera;
+    public GameObject man;
 
     public List<AxleInfo> axleInfos;
     public float maxMotorTorque;
@@ -69,6 +70,7 @@ public class WheelchairController : InteractionObject
                 userControler.SetActive(true);
                 userCamera.SetActive(true);
                 pushing = false;
+                EventManager.TriggerEvent("had_look_at_wheelchair");
             }
         }
     }
