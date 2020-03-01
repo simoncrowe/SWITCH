@@ -24,8 +24,7 @@ public class UserInput : MonoBehaviour
         }
         if (Input.GetKeyDown(menuKey))
         {
-            Debug.Log("Should be toggling menu!");
-            inGameGUI.ShowMenu = !inGameGUI.ShowMenu;
+            inGameGUI.ShowMenu = true;
             playerControler.LockMovement = true;
         }
     }

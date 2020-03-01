@@ -17,6 +17,8 @@ public class Pot : Food
     public float ambientTemprature = 273f;       // Kelvins
     public float hobPotEnergyEfficiency = 0.16f; // Would need some sort of table/array of efficincies for multiple possibilities
     public float contentsCookingRate = 0.01f;
+    public float boilingVolumeLossRate = 0.00001f;
+    public float simmeringVolumeLossRate = 0.000005f;
 
     public ObjectHolderSink potHolderSink;
     public Transform surfaceTransform;
@@ -63,49 +65,64 @@ public class Pot : Food
         }
     }
 
+    public override void InteractantHasConsumedQuarterContents()
+    {
+        audioSource.PlayOneShot(consumptionClip, 0.7f);
+        occupiedVolume *= 0.25f;
+    }
+
     public override void InteractantHasConsumedHalfContents()
     {
-        liquidProportion *= 0.5f;
+        audioSource.PlayOneShot(consumptionClip, 0.8f);
+        occupiedVolume *= 0.5f;
     }
 
     public override void InteractantHasConsumedAllContents()
     {
+        audioSource.PlayOneShot(consumptionClip, 0.9f);
         Empty();
+
     }
 
     float GetSolidIngredientVolume()
     {
         float solidIngredientVolume = 0;
-        if (containsCelery) { solidIngredientVolume += celeryGameObject.GetComponent<ChoppedCelery>().ObjectVolume; }
-        if (containsRutabaga) { solidIngredientVolume += rutabagaGameObject.GetComponent<DicedRutabaga>().ObjectVolume; }
+        if (containsCelery) { solidIngredientVolume += celeryGameObject.GetComponent<Food>().ObjectVolume; }
+        if (containsRutabaga) { solidIngredientVolume += rutabagaGameObject.GetComponent<Food>().ObjectVolume; }
         return solidIngredientVolume;
     }
 
     void Update()
     {
-        if (holdableObjectState == HoldableObjectStates.HeldByObjectHolder)
+        ProcessHeatTransfer();
+        UpdateObjectName();
+        BoilingLogic();
+        SetColours();
+    }
+
+    void ProcessHeatTransfer()
+    {
+        if (holdableObjectState == HoldableObjectStates.HeldByObjectHolder &&
+            mostRecentObjectHolder is ObjectHolderHeatSource)
         {
-            if (mostRecentObjectHolder is ObjectHolderHeatSource)
+            ObjectHolderHeatSource currentHeatSource = mostRecentObjectHolder as ObjectHolderHeatSource;
+            if (currentHeatSource.ThermalOutput > 0)
             {
-                ObjectHolderHeatSource currentHeatSource = mostRecentObjectHolder as ObjectHolderHeatSource;
-                if (currentHeatSource.ThermalOutput > 0)
+                if (temprature < waterBoilingPoint)
                 {
-                    if (temprature < waterBoilingPoint)
-                    {
-                        // Heat transfer rate (W) * temprature gain resulting from heating contents of pot by 1 Jouls * duration of previous frame
-                        temprature += (currentHeatSource.ThermalOutput * (0.239f / (occupiedVolume * 1e6f))) * Time.deltaTime;
-                    }
+                    // Heat transfer rate (W) * temprature gain resulting from heating contents of pot by 1 Jouls * duration of previous frame
+                    temprature += (currentHeatSource.ThermalOutput * (0.239f / (occupiedVolume * 1e6f))) * Time.deltaTime;
                 }
-                else
+            }
+            else
+            {
+                if (temprature > waterSimmeringPoint)
                 {
-                    if (temprature > waterSimmeringPoint)
-                    {
-                        temprature -= waterCoolingRate * Time.deltaTime;
-                    }
-                    else if (temprature > waterRoomTemprature)
-                    {
-                        temprature -= secondaryWaterCoolingRate * Time.deltaTime;
-                    }
+                    temprature -= waterCoolingRate * Time.deltaTime;
+                }
+                else if (temprature > waterRoomTemprature)
+                {
+                    temprature -= secondaryWaterCoolingRate * Time.deltaTime;
                 }
             }
         }
@@ -120,7 +137,10 @@ public class Pot : Food
                 temprature -= secondaryWaterCoolingRate * Time.deltaTime;
             }
         }
+    }
 
+    void UpdateObjectName()
+    {
         string cookedNessDescriptor = "";
         if (occupiedVolume == 0)
         {
@@ -199,18 +219,27 @@ public class Pot : Food
         {
             objectName = "half-eaten " + objectName;
         }
+    }
 
+    void BoilingLogic()
+    {
         if (temprature > waterBoilingPoint)
         {
             audioSource.volume = 0.5f;
+            if (occupiedVolume > 0) { occupiedVolume -= boilingVolumeLossRate * Time.deltaTime; } 
         }
         else if (temprature > waterSimmeringPoint)
         {
+            if (occupiedVolume > 0) { occupiedVolume -= simmeringVolumeLossRate * Time.deltaTime; }
+
             if (!audioSource.isPlaying)
             {
                 audioSource.Play();
             }
-            audioSource.volume = (temprature - waterSimmeringPoint) / (waterBoilingPoint - waterSimmeringPoint) * 0.5f;
+            audioSource.volume = (temprature - waterSimmeringPoint) / 
+                (waterBoilingPoint - waterSimmeringPoint) * 0.5f;
+
+
         }
         else
         {
@@ -219,10 +248,16 @@ public class Pot : Food
                 audioSource.Pause();
             }
         }
+    }
+    void SetColours()
+    {
+        surfaceRenderer.material.color = Color.Lerp(
+            surfaceColour, burntSurfaceColor, contentsCookedness - 1);
+        surfaceTransform.transform.localPosition = Vector3.Lerp(
+            surfacePositionEmpty, surfacePositionFull, occupiedVolume / capacity);
+        surfaceTransform.transform.localScale = Vector3.Lerp(
+            surfaceScaleEmpty, surfaceScaleFull, occupiedVolume / capacity);
 
-        surfaceRenderer.material.color = Color.Lerp(surfaceColour, burntSurfaceColor, contentsCookedness - 1);
-        surfaceTransform.transform.localPosition = Vector3.Lerp(surfacePositionEmpty, surfacePositionFull, occupiedVolume / capacity);
-        surfaceTransform.transform.localScale = Vector3.Lerp(surfaceScaleEmpty, surfaceScaleFull, occupiedVolume / capacity);
     }
 
     public override InteractionTypes GetInteractionWith(InteractionObject targetObject)
@@ -283,23 +318,29 @@ public class Pot : Food
         else if (targetObject is NPCInteraction)
         {
             InteractionResult ingestionResult = new InteractionResult();
-            NPCInteraction targetyNPCInteraction = targetObject as NPCInteraction;
+            NPCInteraction targetNPCInteraction = targetObject as NPCInteraction;
             ingestionResult.Consequence = InteractionConsequence.RetainHeldObject;
-            IngestionResult result = targetyNPCInteraction.NPCMetabolism.Ingest(this);
+            IngestionResult result = targetNPCInteraction.NPCMetabolism.Ingest(this);
             this.name = this.objectName;
             switch (result)
             {
-                case IngestionResult.IngestedAll:
+                case IngestionResult.IngestedAllContents:
                     ingestionResult.Message = "You give the " + this.name + " to the " + targetObject.objectName + ".";
-                    targetyNPCInteraction.currentInteractionCLip = this.consumptionClip;
-                    targetyNPCInteraction.audioSource.PlayOneShot(targetyNPCInteraction.currentInteractionCLip, 1f);
+                    targetNPCInteraction.currentInteractionCLip = this.consumptionClip;
+                    targetNPCInteraction.audioSource.PlayOneShot(targetNPCInteraction.currentInteractionCLip, 1f);
                     Empty();
                     break;
-                case IngestionResult.IngestedHalf:
+                case IngestionResult.IngestedHalfContents:
                     ingestionResult.Message = "You give half the " + this.objectName + " to the " + targetObject.objectName + ".";
-                    targetyNPCInteraction.currentInteractionCLip = this.consumptionClip;
-                    targetyNPCInteraction.audioSource.PlayOneShot(targetyNPCInteraction.currentInteractionCLip, 0.8f);
-                    liquidProportion*= 0.5f;
+                    targetNPCInteraction.currentInteractionCLip = this.consumptionClip;
+                    targetNPCInteraction.audioSource.PlayOneShot(targetNPCInteraction.currentInteractionCLip, 0.8f);
+                    occupiedVolume*= 0.5f;
+                    break;
+                case IngestionResult.IngestedQuarterContents:
+                    ingestionResult.Message = "You give a quarter of the " + this.objectName + " to the " + targetObject.objectName + ".";
+                    targetNPCInteraction.currentInteractionCLip = this.consumptionClip;
+                    targetNPCInteraction.audioSource.PlayOneShot(targetNPCInteraction.currentInteractionCLip, 0.5f);
+                    occupiedVolume *= 0.25f;
                     break;
                 case IngestionResult.IngestedNone:
                     ingestionResult.Message = "The " + targetObject.objectName + " will not take the " + this.objectName + ".";
@@ -380,7 +421,7 @@ public class Pot : Food
 
     void Empty()
     {
-        liquidProportion = 0;
+        occupiedVolume = 0;
 
         GameObject.Destroy(celeryGameObject);
         containsCelery = false;

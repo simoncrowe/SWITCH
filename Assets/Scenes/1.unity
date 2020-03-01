@@ -141,7 +141,7 @@ MonoBehaviour:
   bodyFatProportion: 0.2
   bodyProteinProportion: 0.17
   height: 1.7
-  age: 0
+  age: 60
   sex: 1
   metabolicSpeedScale: 50
   stomachCapacity: 0.0015
@@ -455,8 +455,9 @@ GameObject:
   - component: {fileID: 201}
   - component: {fileID: 195}
   - component: {fileID: 82}
-  - component: {fileID: 196}
   - component: {fileID: 79}
+  - component: {fileID: 90}
+  - component: {fileID: 91}
   m_Layer: 2
   m_Name: Had
   m_TagString: Untagged
@@ -899,6 +900,61 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &90
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 77}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23b28ca9b22b4a04c932b1ff03ed17dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isAcceptingFood: 1
+  isPlayerCharacter: 0
+  isMobile: 1
+  inGameGUI: {fileID: 0}
+  mass: 65
+  bodyFatProportion: 0.2
+  bodyProteinProportion: 0.17
+  height: 1.7
+  age: 35
+  sex: 0
+  metabolicSpeedScale: 1
+  stomachCapacity: 0.0015
+  colonCapacity: 0.001
+  bladderCapacity: 0.0005
+  waterDigestionRate: 0.000000013
+  solidDigestionRate: 4.6e-10
+  energyDigesting: 2092000
+  solidsDigesting: 0.00025
+  waterDigesting: 0.00045
+--- !u!114 &91
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 77}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77c02f87275f0cf42a04924e0ae5b6c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  userController: {fileID: 0}
+  canSuspendConversation: 1
+  suspendConversationOptionText: 
+  firstKey: 0
+  resumptionNodeKey: 
+  hungerNodeKey: 
+  deathNodeKey: 
+  conversing: 0
+  dialogueData: {fileID: 4900000, guid: 5b9fbde2432b15042961bf6583efa59a, type: 3}
+  customSkin: {fileID: 11400000, guid: 6d13732c57495b34ca9b913741fc3ab5, type: 2}
+  manFedAndFoodFinishedNodeId: 
+  manFedAndFoodNotFinishedNodeId: 
 --- !u!1 &97
 GameObject:
   m_ObjectHideFlags: 0
@@ -1212,29 +1268,7 @@ MonoBehaviour:
   toRightOfWheelchairPosition: {x: -0.835, y: 0.894, z: -0.235}
   behindWheelchairPosition: {x: 0.068, y: 0.894, z: 0.48}
   toLeftOfWheelchairPosition: {x: 0.885, y: 0.894, z: -0.235}
-  dialogue: {fileID: 196}
---- !u!114 &196
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 77}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1da6392ae9c0d96408112a54affe3167, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  userController: {fileID: 0}
-  canSuspendConversation: 0
-  suspendConversationOptionText: 
-  firstKey: 0
-  resumptionNodeKey: 0
-  hungerNodeKey: 
-  deathNodeKey: 
-  conversing: 0
-  dialogueData: {fileID: 4900000, guid: 5b9fbde2432b15042961bf6583efa59a, type: 3}
-  customSkin: {fileID: 11400000, guid: 6d13732c57495b34ca9b913741fc3ab5, type: 2}
+  dialogue: {fileID: 91}
 --- !u!4 &201
 Transform:
   m_ObjectHideFlags: 0
@@ -1722,6 +1756,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 037ad6fdb8818114385f600c52e22b2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  potFoodVolume: 0.0012
+  potFoodEnergyJ: 2492624
+  manMetabolism: {fileID: 17}
+  hadMetabolism: {fileID: 90}
+  ingesdtPotFoodClip: {fileID: 0}
 --- !u!1 &575143706
 GameObject:
   m_ObjectHideFlags: 0

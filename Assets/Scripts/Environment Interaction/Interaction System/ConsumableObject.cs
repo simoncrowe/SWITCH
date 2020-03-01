@@ -44,6 +44,8 @@ public abstract class ConsumableObject : HoldableObject
 
     public virtual void InteractantHasConsumedHalfContents() { }
 
+    public virtual void InteractantHasConsumedQuarterContents() { }
+
     public virtual void InteractantHasConsumedAllContents() { }
 
     void Start()

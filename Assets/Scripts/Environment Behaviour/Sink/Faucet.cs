@@ -21,8 +21,6 @@ public class Faucet : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         waterParticleSys = GetComponent<ParticleSystem>();
-        //var waterParticleEmission = waterParticleSys.emission;
-        //waterParticleEmission.enabled = true;
     }
 
     void Update()
@@ -30,16 +28,19 @@ public class Faucet : MonoBehaviour
         TotalWaterRate = coldTap.state + hotTap.state + 0.04f;
         audioSource.volume = (TotalWaterRate / 2f) + 0.04f;
         var waterParticleEmission = waterParticleSys.emission;
+        var waterParticleSysShape = waterParticleSys.shape;
         var waterParticleSysMain = waterParticleSys.main;
 
         if (TotalWaterRate > 0.01f)
         {
-            waterParticleEmission.rateOverTime = 170 * TotalWaterRate;
+            waterParticleEmission.rateOverTime = 400f + (200f * TotalWaterRate);
+            waterParticleSysShape.radius = 0.01f + (TotalWaterRate / 19);
             waterParticleSysMain.startSize = .029f * TotalWaterRate;
         }
         else
         {
             waterParticleEmission.rateOverTime = 0.1f * TotalWaterRate;
+            waterParticleSysShape.radius = 0.01f;
             waterParticleSysMain.startSize = .001f * TotalWaterRate;
         }
     }

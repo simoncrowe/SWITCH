@@ -5,6 +5,7 @@ public class Backsplash : MonoBehaviour
 {
 
     public Faucet faucet;
+    public ObjectHolderSink potHolder;
     private ParticleSystem particleSys;
 
     void Start()
@@ -17,12 +18,12 @@ public class Backsplash : MonoBehaviour
         var particleEmission = particleSys.emission;
         var particleSysMain = particleSys.main;
 
-        if (faucet.TotalWaterRate > 0)
+        if (!potHolder.PotFilledByFaucet && faucet.TotalWaterRate > 0)
         {
             particleEmission.enabled = true;
-            particleEmission.rateOverTime = 90f * faucet.TotalWaterRate;
-            particleSysMain.startSize = 0.02f * faucet.TotalWaterRate;
-            particleSysMain.startSpeed = 0.3f * faucet.TotalWaterRate;
+            particleEmission.rateOverTime = 90f  *  faucet.TotalWaterRate;
+            particleSysMain.startSize = 0.02f  *  faucet.TotalWaterRate;
+            particleSysMain.startSpeed = 0.3f  *  faucet.TotalWaterRate;
         }
         else
         {

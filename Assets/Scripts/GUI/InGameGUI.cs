@@ -60,12 +60,12 @@ public class InGameGUI : MonoBehaviour
             GUI.Window(0, new Rect((Screen.width / 2) - 400, (Screen.height / 2) - 250, 800, 500), MainMenu, "Menu");
         }
     }
-    protected void MainMenu(int id)
+    protected virtual void MainMenu(int id)
     {
         Debug.Log("CallingMainMenu Method.");
         if (GUI.Button(new Rect(360, 470, 80, 20), "Resume"))
         {
-           showMenu = false;
+            showMenu = false;
         }
     }
     // Adds a unique UIMessage to the messages list; sorts list by message priority

@@ -33,6 +33,7 @@ public class Metabolism : MonoBehaviour
     public float waterDigesting = 0.00045f;
     private float hungerThreshold = 0.1f;   // Minimum proportion of stomach containing solids 
                                             //before hunger messages display
+    private float FreeStomachCapacity { get { return stomachCapacity - DigestiveCapacityOccupied; } }
     private float essentialEnergy; //Joules
     private float velocity;
     private float maxVitalBodyWater; // Maximum  proportion of body water maintained to prevent dehydration
@@ -45,6 +46,7 @@ public class Metabolism : MonoBehaviour
     private float basalMetabolicRate;
     private UIMessage hungerMessage;
     private UIMessage thirstMessage;
+    private AudioSource audioSource;
 
     public void Kill()
     {
@@ -52,6 +54,8 @@ public class Metabolism : MonoBehaviour
     }
     void Awake()
     {
+        audioSource = GetComponent<AudioSource>();
+
         IsAlive = true;
         // calulates basal metabolic rate in jouls per second (Mifflin-St Jeor Equation)
         if (sex == Sex.female)
@@ -68,6 +72,7 @@ public class Metabolism : MonoBehaviour
             essentialEnergy = (mass * 1000 * bodyFatProportion * 36819.2f)
                 - (mass * 1000 * (bodyFatProportion - 0.04f) * 37800); // For measuring starvation
         }
+
         // Approximates avaliable energy before starvation
         startingAvailableEnergy = 0.68f *       // adjusted based on 1987 hunger strike mortality data
                         ((500 * 16800f)                                     // Carbohydrates
@@ -84,8 +89,12 @@ public class Metabolism : MonoBehaviour
         previousPosition = transform.position;
         hungerMessage = new UIMessage("You are hungry.", 0, UIMessageDisplayMode.Continuous, false, 0);
         thirstMessage = new UIMessage("You are thirsty.", 0, UIMessageDisplayMode.Continuous, false, 0);
-        inGameGUI.AddUIMessage(hungerMessage);
-        inGameGUI.AddUIMessage(thirstMessage);
+
+        if (inGameGUI != null)
+        {
+            inGameGUI.AddUIMessage(hungerMessage);
+            inGameGUI.AddUIMessage(thirstMessage);
+        }
     }
 
     void FixedUpdate()
@@ -107,14 +116,14 @@ public class Metabolism : MonoBehaviour
             {
                 waterDigesting -= waterDigestionRate * Time.fixedDeltaTime * metabolicSpeedScale;
                 if (vitalBodyWater < maxVitalBodyWater) // Does the body need water?
-                { 
+                {
                     // Put the water into bodily circulation.
-                    vitalBodyWater += waterDigestionRate * Time.fixedDeltaTime * metabolicSpeedScale; 
+                    vitalBodyWater += waterDigestionRate * Time.fixedDeltaTime * metabolicSpeedScale;
                 }
                 else
                 {
                     // Put the water into the bladder.
-                    bladderContents += waterDigestionRate * Time.fixedDeltaTime * metabolicSpeedScale; 
+                    bladderContents += waterDigestionRate * Time.fixedDeltaTime * metabolicSpeedScale;
                 }
 
             }
@@ -176,7 +185,7 @@ public class Metabolism : MonoBehaviour
                     {
                         thirstMessage.SetText("You are dehydrated. If you don't don't take on some water soon, you will die.");
                     }
-                    //if (vitalBodyWater < 0) {IsAlive = false; print("You have died of dehydration!");}
+                    if (vitalBodyWater < 0) { IsAlive = false; print("You have died of dehydration!"); }
                 }
                 else
                 {
@@ -192,21 +201,38 @@ public class Metabolism : MonoBehaviour
     {
         if (isAcceptingFood)
         {
-            if (ingestedObject.ObjectVolume < (stomachCapacity - DigestiveCapacityOccupied))
+            if (ingestedObject.isContainer)
+            {
+                if (ingestedObject.ObjectVolume < FreeStomachCapacity)
+                {
+                    energyDigesting += ingestedObject.EnergyContent;
+                    waterDigesting += (ingestedObject.ObjectVolume * ingestedObject.liquidProportion);
+                    solidsDigesting += (ingestedObject.ObjectVolume * (1 - ingestedObject.liquidProportion));
+                    return IngestionResult.IngestedAllContents;
+                }
+                else if (ingestedObject.ObjectVolume / 2 < FreeStomachCapacity)
+                {
+                    energyDigesting += ingestedObject.EnergyContent / 2;
+                    waterDigesting += (ingestedObject.ObjectVolume * ingestedObject.liquidProportion) / 2;
+                    solidsDigesting += (ingestedObject.ObjectVolume * (1 - ingestedObject.liquidProportion)) / 2;
+                    return IngestionResult.IngestedHalfContents;
+                }
+                else if (ingestedObject.ObjectVolume / 4 < FreeStomachCapacity)
+                {
+                    energyDigesting += ingestedObject.EnergyContent / 4;
+                    waterDigesting += (ingestedObject.ObjectVolume * ingestedObject.liquidProportion) / 4;
+                    solidsDigesting += (ingestedObject.ObjectVolume * (1 - ingestedObject.liquidProportion)) / 4;
+                    return IngestionResult.IngestedQuarterContents;
+                }
+            }
+            else if (ingestedObject.ObjectVolume < FreeStomachCapacity)
             {
                 energyDigesting += ingestedObject.EnergyContent;
                 waterDigesting += ingestedObject.ObjectVolume * ingestedObject.liquidProportion;
                 solidsDigesting += ingestedObject.ObjectVolume * (1 - ingestedObject.liquidProportion);
-                if (ingestedObject.isContainer)
-                {
-                    return IngestionResult.IngestedAllContents;
-                }
-                else
-                {
-                    return IngestionResult.IngestedAll;
-                }
+                return IngestionResult.IngestedAll;
             }
-            else  if (ingestedObject.isHalfable)
+            else if (ingestedObject.isHalfable)
             {
                 ConsumableObject halfIngestedObject = (ConsumableObject)
                     ingestedObject.halfObject.GetComponent(typeof(ConsumableObject));
@@ -218,19 +244,42 @@ public class Metabolism : MonoBehaviour
                     return IngestionResult.IngestedHalf;
                 }
             }
-            else if (ingestedObject.isContainer &&
-                    (ingestedObject.ObjectVolume / 2) < (stomachCapacity - DigestiveCapacityOccupied))
-            {
-                energyDigesting += ingestedObject.EnergyContent / 2;
-                waterDigesting += (ingestedObject.ObjectVolume * ingestedObject.liquidProportion) / 2;
-                solidsDigesting += (ingestedObject.ObjectVolume * (1 - ingestedObject.liquidProportion)) / 2;
-                return IngestionResult.IngestedHalfContents;
-            }
         }
         return IngestionResult.IngestedNone;
     }
+
+    public SimpleConsumable IngestSimple(SimpleConsumable consumable, AudioClip ingestionClip)
+    {
+        float consumedVolume;
+        float consumedEnergy;
+
+        if (consumable.Volume > 0 && FreeStomachCapacity > 0)
+        {
+            audioSource.PlayOneShot(ingestionClip);
+        }
+
+        if (consumable.Volume > FreeStomachCapacity)
+        {
+            consumedVolume = FreeStomachCapacity;
+            consumedEnergy = consumable.Energy * (consumedVolume / consumable.Volume);
+        }
+        else
+        {
+            consumedVolume = consumable.Volume;
+            consumedEnergy = consumable.Energy;
+        }
+
+        consumable.Energy -= consumedEnergy;
+        energyDigesting += consumedEnergy;
+
+        consumable.Volume -= consumedVolume;
+        solidsDigesting += consumedVolume / 2;
+        waterDigesting += consumedVolume / 2;
+
+        return consumable;
+    }
 }
 
-public enum IngestionResult { IngestedAll, IngestedHalf, IngestedNone, IngestedAllContents, IngestedHalfContents }
+public enum IngestionResult { IngestedAll, IngestedHalf, IngestedNone, IngestedAllContents, IngestedHalfContents, IngestedQuarterContents }
 
 public enum Sex { female, male }

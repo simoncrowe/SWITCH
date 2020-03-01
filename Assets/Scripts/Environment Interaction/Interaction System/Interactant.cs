@@ -176,12 +176,16 @@ public class Interactant : MonoBehaviour
                             ingestionResultMessage.SetText("You " + ingestionFailPhrase + " " + ingestionVerb + " the " + heldConsumable.objectName + ".");
                             break;
                         case IngestionResult.IngestedAllContents:
-                            ingestionResultMessage.SetText("You " + ingestionVerb + " the " + heldConsumable.objectName);
+                            ingestionResultMessage.SetText("You " + ingestionVerb + "  the " + heldConsumable.objectName);
                             heldConsumable.InteractantHasConsumedAllContents();
                             break;
                         case IngestionResult.IngestedHalfContents:
                             ingestionResultMessage.SetText("You " + ingestionVerb + " half of the " + heldConsumable.objectName);
                             heldConsumable.InteractantHasConsumedHalfContents();
+                            break;
+                        case IngestionResult.IngestedQuarterContents:
+                            ingestionResultMessage.SetText("You " + ingestionVerb + " a quarter of the " + heldConsumable.objectName);
+                            heldConsumable.InteractantHasConsumedQuarterContents();
                             break;
                     }
                     ingestionResultMessage.SetRemainingDuration(3f);
@@ -242,6 +246,7 @@ public class Interactant : MonoBehaviour
                         break;
                 }
                 interactWithSelectedMessage.SetShouldDiplay(false);
+                consumeObjectMessage.SetShouldDiplay(false);
                 interactionResultMessage.SetRemainingDuration(3f);
                 interactionResultMessage.SetShouldDiplay(true);
             }
@@ -249,7 +254,6 @@ public class Interactant : MonoBehaviour
         else
         {
             interactWithSelectedMessage.SetShouldDiplay(false);
-
         }
     }
 

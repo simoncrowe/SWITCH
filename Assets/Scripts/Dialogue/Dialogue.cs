@@ -11,17 +11,17 @@ public class Dialogue : MonoBehaviour
     public FirstPersonController userController;
     public bool canSuspendConversation = true;
     public string suspendConversationOptionText;
-    Dictionary<string, Node> nodeIDs;
+    protected Dictionary<string, Node> nodeIDs;
     public string firstKey;
     public string resumptionNodeKey;
     public string hungerNodeKey;
     public string deathNodeKey;
-    Node currentNode;
+    protected Node currentNode;
     Node latestNode;
     public bool conversing;
     public TextAsset dialogueData;
 
-    private class Node
+    protected class Node
     {
         public string NPC { get; set; }
         public string ID { get; set; }
@@ -35,7 +35,7 @@ public class Dialogue : MonoBehaviour
         }
     }
 
-    private struct Choice
+    protected struct Choice
     {
         private string target;
         private string player;
@@ -70,7 +70,7 @@ public class Dialogue : MonoBehaviour
         if (userController != null)
         {
             userController.LockMovement = true;
-            }
+        }
     }
 
     void LoadData()
@@ -270,7 +270,8 @@ public class Dialogue : MonoBehaviour
                 if (GUI.Button(new Rect(5, ChoicesBottom + 5, scrollInDimX, lineDimY + 10), ""))
                 {
                     conversing = false;
-                    if (userController != null) {
+                    if (userController != null)
+                    {
                         userController.LockMovement = false;
                     }
                     InteractionObject.intaractionMenuActive = false;
