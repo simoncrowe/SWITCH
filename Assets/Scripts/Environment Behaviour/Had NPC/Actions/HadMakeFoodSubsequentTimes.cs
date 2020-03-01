@@ -2,78 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HadMakeFoodFirstTime : MonoBehaviour
+public class HadMakeFoodSubsequentTimes : MonoBehaviour
 {
     public float potFoodVolume = 0.0012f;
     public float potFoodEnergyJ = 2492624f;
     public Metabolism manMetabolism;
     public Metabolism hadMetabolism;
     public AudioClip ingesdtPotFoodClip;
+    public HadMakeFoodFirstTime makeFoodFirstTimeScript;
 
     private SimpleConsumable potFood;
 
-    public bool FoodMade { get; private set; }
-
     void Start()
     {
-        FoodMade = false;
+        potFood = new SimpleConsumable(0, 0);
         EventManager.StartListening("dialogue_5", InitiateAction);
     }
 
     void InitiateAction()
     {
-        Debug.Log("Initiated HadMakeFoodFirstTime.");
-        Invoke("GoToWorkSurface", 1f);
-    }
-
-    void GoToWorkSurface()
-    {
-        EventManager.TriggerEvent("move_had_to_cupboard");
-        EventManager.StartListening("had_arrives_at_cupboard", OpenBottomDrawer);
-
-    }
-
-    void OpenBottomDrawer()
-    {
-        EventManager.StopListening("had_arrives_at_cupboard", OpenBottomDrawer);
-        EventManager.TriggerEvent("open_bottom_drawer");
-        Invoke("OpenTopDrawer", 1.25f);
-    }
-
-    void OpenTopDrawer()
-    {
-        EventManager.TriggerEvent("open_top_drawer");
-        Invoke("CloseTopDrawer", 1.5f);
-    }
-
-    void CloseTopDrawer()
-    {
-        EventManager.TriggerEvent("close_top_drawer");
-        Invoke("CloseBottomDrawer", 0.3f);
-    }
-
-    void CloseBottomDrawer()
-    {
-        EventManager.TriggerEvent("close_bottom_drawer");
-        Invoke("OpenRightCupboardDoor", 0.5f);
-    }
-
-    void OpenRightCupboardDoor()
-    {
-        EventManager.TriggerEvent("open_cupboard_door");
-        Invoke("OpenLeftCupboardDoor", 0.05f);
-    }
-
-    void OpenLeftCupboardDoor()
-    {
-        EventManager.TriggerEvent("open_cupboard_door");
-        Invoke("CloseCupboardDoor", 2.5f);
-    }
-
-    void CloseCupboardDoor()
-    {
-        EventManager.TriggerEvent("close_cupboard_door");
-        Invoke("WalkToChutes", 0.75f);
+        if (makeFoodFirstTimeScript.FoodMade)
+        {
+            Debug.Log("Initiated HadMakeFoodSubsequentTImes.");
+            if (potFood.Volume == 0)
+            {
+                Invoke("WalkToChutes", 1f);
+            }
+            else {
+                Invoke("HadFeedMan", 1f);
+            }
+        }
     }
 
     void WalkToChutes()
@@ -260,7 +218,6 @@ public class HadMakeFoodFirstTime : MonoBehaviour
     void HadFeedSelf()
     {
         potFood = hadMetabolism.IngestSimple(potFood, ingesdtPotFoodClip);
-        FoodMade = true;
         EventManager.TriggerEvent("had_has_fed_man_and_food_finshed");
     }
 }

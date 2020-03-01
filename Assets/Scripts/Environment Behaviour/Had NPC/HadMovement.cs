@@ -19,10 +19,7 @@ public class HadMovement : MonoBehaviour
     public Vector3 behindWheelchairPosition;
     public Vector3 toLeftOfWheelchairPosition;
 
-    public Dialogue dialogue;
-
-    public GameObject hadCamera;
-    public GameObject wheelchair;
+    public BlindDialogue dialogue;
 
     private AudioSource audioSource;
     private Queue<Vector3> futurePostions;
