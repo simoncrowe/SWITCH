@@ -146,7 +146,7 @@ public class Dialogue : MonoBehaviour
         }
     }
 
-    void Start()
+    protected void Start()
     {
         nodeIDs = new Dictionary<string, Node>();
         LoadData();

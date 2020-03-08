@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class ChutesAudio : MonoBehaviour
 {
-    public float dealayBeforeObjectsFalling = 2f;
+    public float delayBeforeObjectsFalling = 2f;
     public AudioClip objectsFallClip;
 
     private AudioSource audioSource;

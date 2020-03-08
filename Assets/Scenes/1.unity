@@ -110,8 +110,6 @@ GameObject:
   - component: {fileID: 106}
   - component: {fileID: 356}
   - component: {fileID: 291}
-  - component: {fileID: 380}
-  - component: {fileID: 378}
   - component: {fileID: 17}
   - component: {fileID: 20}
   m_Layer: 9
@@ -632,8 +630,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 178}
-  - component: {fileID: 379}
-  - component: {fileID: 101}
   - component: {fileID: 183}
   m_Layer: 9
   m_Name: Wheelchair
@@ -654,7 +650,6 @@ GameObject:
   - component: {fileID: 179}
   - component: {fileID: 366}
   - component: {fileID: 301}
-  - component: {fileID: 85}
   m_Layer: 9
   m_Name: Immoblie
   m_TagString: Untagged
@@ -662,20 +657,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!64 &85
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 84}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 1
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 4300002, guid: c34bddcd7883f4e418b9559dd75adc93, type: 3}
 --- !u!82 &86
 AudioSource:
   m_ObjectHideFlags: 0
@@ -944,7 +925,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   userController: {fileID: 0}
-  canSuspendConversation: 1
+  canSuspendConversation: 0
   suspendConversationOptionText: 
   firstKey: 0
   resumptionNodeKey: 
@@ -975,21 +956,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!136 &101
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 13600000, guid: b5c094c900473c2449dd7d55276cdcf7,
-    type: 3}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 83}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.019
-  m_Height: 0.54
-  m_Direction: 0
-  m_Center: {x: -0.001020476, y: 0.6775112, z: 0.3297709}
 --- !u!4 &106
 Transform:
   m_ObjectHideFlags: 0
@@ -1126,7 +1092,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 912ec657e83c1334eba769ae464c4917, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.75
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -1251,7 +1217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d789c4eb951c6ef4d8e67684435cbdc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementRate: 1.1
+  movementRate: 1.2
   minFootfallInterval: 0.6
   maxFootfallInterval: 0.7
   footfallSounds:
@@ -1427,53 +1393,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 97}
   m_Mesh: {fileID: 4300000, guid: 5233785ea62b71e44a7e0a9b0dd229ad, type: 3}
---- !u!54 &378
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 11}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!54 &379
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 5400000, guid: b5c094c900473c2449dd7d55276cdcf7,
-    type: 3}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 83}
-  serializedVersion: 2
-  m_Mass: 75
-  m_Drag: 1
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!64 &380
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 11}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 1
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 4300002, guid: 8ded4ee38818ded4190f36796588b7d9, type: 3}
 --- !u!64 &384
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1710,6 +1629,7 @@ GameObject:
   - component: {fileID: 571838849}
   - component: {fileID: 571838850}
   - component: {fileID: 571838851}
+  - component: {fileID: 571838852}
   m_Layer: 2
   m_Name: Actions
   m_TagString: Untagged
@@ -1743,7 +1663,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6efc4e91c0f94fe41a921a307de80595, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delayBeforeWalking: 0
+  delayBeforeWalking: 10
 --- !u!114 &571838851
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1761,6 +1681,27 @@ MonoBehaviour:
   manMetabolism: {fileID: 17}
   hadMetabolism: {fileID: 90}
   ingesdtPotFoodClip: {fileID: 0}
+--- !u!114 &571838852
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 571838848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3bcf8fd8a4625548bfbd16536ca21d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  exitDialgueNodes:
+  - C
+  - F
+  wheelchair: {fileID: 83}
+  had: {fileID: 77}
+  wheelchairTurnedRotation: {x: 0, y: 180, z: 0}
+  wheelcharTurnDuration: 3
+  wheelchairExitedPostion: {x: 0.06, y: 0.464, z: 2.473}
+  wheelchairExitDuration: 7
 --- !u!1 &575143706
 GameObject:
   m_ObjectHideFlags: 0

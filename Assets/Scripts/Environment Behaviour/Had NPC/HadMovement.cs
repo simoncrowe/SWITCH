@@ -8,6 +8,7 @@ public class HadMovement : MonoBehaviour
     public float minFootfallInterval;
     public float maxFootfallInterval;
     public AudioClip[] footfallSounds;
+    public bool ForceFootfalls { get; set; }
 
     public Vector3 atDoorPosition;
     public Vector3 atChutesPosition;
@@ -27,6 +28,7 @@ public class HadMovement : MonoBehaviour
    
     void Start()
     {
+        ForceFootfalls = false;
         audioSource = GetComponent<AudioSource>();
         transform.position = this.atDoorPosition;
         futurePostions = new Queue<Vector3>();
@@ -44,7 +46,7 @@ public class HadMovement : MonoBehaviour
 
     void Update()
     {
-        if (Move()) {
+        if (Move() || ForceFootfalls) {
             ProcessFootfalls();
         }
         if (transform.position == inFrontOfWheelchairPosition)
