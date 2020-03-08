@@ -2223,7 +2223,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb55d4b1affe55741bfca41fffae8aa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dealayBeforeObjectsFalling: 3
+  delayBeforeObjectsFalling: 2
   objectsFallClip: {fileID: 8300000, guid: 171483c3a4a6e7342bab5121b80448a2, type: 3}
 --- !u!82 &1608513307
 AudioSource:
