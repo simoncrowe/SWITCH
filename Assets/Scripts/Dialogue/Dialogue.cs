@@ -20,6 +20,7 @@ public class Dialogue : MonoBehaviour
     Node latestNode;
     public bool conversing;
     public TextAsset dialogueData;
+    public string CurrentNodeID { get { return currentNode.ID;} set { currentNode = nodeIDs[value]; } }
 
     protected class Node
     {

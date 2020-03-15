@@ -18,6 +18,7 @@ public abstract class ConsumableObject : HoldableObject
     public AudioClip breakInHalfClip;
     public AudioClip breakUpClip;
     public float EnergyContent { get { return baseEnergyContentJ * MeanLocalScale; } }
+    public float contentsCookedness = 0;
     protected float objectVolume;
     protected bool hasCaluclatedVolume = false;
 

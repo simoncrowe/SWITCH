@@ -43,7 +43,6 @@ public class Pot : Food
     private bool containsCelery = false;
     private bool containsRutabaga = false;
     private bool halfEaten = false;
-    private float contentsCookedness = 0;
 
     void Start()
     {

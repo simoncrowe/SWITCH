@@ -92,10 +92,14 @@ public class Interactant : MonoBehaviour
                     selectedObject = null;
                 }
             }
-            // The Interactant is holding something
+
+            // Cleaning up bad state
+            consumeObjectMessage.SetShouldDiplay(false);
         }
         else
         {
+            // The Interactant is holding something
+
             // Logic relating to interaction with other objects in scene
             ProcessHeldAndSelectedObjectInteraction();
             // Interactant drops object
@@ -108,7 +112,6 @@ public class Interactant : MonoBehaviour
             {
                 // The object is consumable
                 ProcessHeldObjectConsumption();
-
             }
         }
     }

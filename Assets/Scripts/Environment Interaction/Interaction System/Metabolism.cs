@@ -197,52 +197,80 @@ public class Metabolism : MonoBehaviour
         }
     }
 
+    private void TriggerIngestionEvent(ConsumableObject ingestedObject)
+    {
+        string cookednessPrefix = string.Empty;
+        if (ingestedObject.contentsCookedness > 1.25f)
+        {
+            cookednessPrefix = "over";
+        }
+        else if (ingestedObject.contentsCookedness < 0.5f)
+        {
+            cookednessPrefix = "under";
+        }
+        
+        EventManager.TriggerEvent(gameObject.name + "_eats_" + cookednessPrefix + "cooked_food");
+    }
+
     public IngestionResult Ingest(ConsumableObject ingestedObject)
     {
         if (isAcceptingFood)
         {
-            if (ingestedObject.isContainer)
+            IngestionResult result = InjestionLogic(ingestedObject);
+
+            if (result != IngestionResult.IngestedNone)
             {
-                if (ingestedObject.ObjectVolume < FreeStomachCapacity)
-                {
-                    energyDigesting += ingestedObject.EnergyContent;
-                    waterDigesting += (ingestedObject.ObjectVolume * ingestedObject.liquidProportion);
-                    solidsDigesting += (ingestedObject.ObjectVolume * (1 - ingestedObject.liquidProportion));
-                    return IngestionResult.IngestedAllContents;
-                }
-                else if (ingestedObject.ObjectVolume / 2 < FreeStomachCapacity)
-                {
-                    energyDigesting += ingestedObject.EnergyContent / 2;
-                    waterDigesting += (ingestedObject.ObjectVolume * ingestedObject.liquidProportion) / 2;
-                    solidsDigesting += (ingestedObject.ObjectVolume * (1 - ingestedObject.liquidProportion)) / 2;
-                    return IngestionResult.IngestedHalfContents;
-                }
-                else if (ingestedObject.ObjectVolume / 4 < FreeStomachCapacity)
-                {
-                    energyDigesting += ingestedObject.EnergyContent / 4;
-                    waterDigesting += (ingestedObject.ObjectVolume * ingestedObject.liquidProportion) / 4;
-                    solidsDigesting += (ingestedObject.ObjectVolume * (1 - ingestedObject.liquidProportion)) / 4;
-                    return IngestionResult.IngestedQuarterContents;
-                }
+                TriggerIngestionEvent(ingestedObject);
             }
-            else if (ingestedObject.ObjectVolume < FreeStomachCapacity)
+
+            return result;
+        }
+        return IngestionResult.IngestedNone;
+    }
+
+    private IngestionResult InjestionLogic(ConsumableObject ingestedObject)
+    {
+        if (ingestedObject.isContainer)
+        {
+            if (ingestedObject.ObjectVolume < FreeStomachCapacity)
             {
                 energyDigesting += ingestedObject.EnergyContent;
-                waterDigesting += ingestedObject.ObjectVolume * ingestedObject.liquidProportion;
-                solidsDigesting += ingestedObject.ObjectVolume * (1 - ingestedObject.liquidProportion);
-                return IngestionResult.IngestedAll;
+                waterDigesting += (ingestedObject.ObjectVolume * ingestedObject.liquidProportion);
+                solidsDigesting += (ingestedObject.ObjectVolume * (1 - ingestedObject.liquidProportion));
+                return IngestionResult.IngestedAllContents;
             }
-            else if (ingestedObject.isHalfable)
+            else if (ingestedObject.ObjectVolume / 2 < FreeStomachCapacity)
             {
-                ConsumableObject halfIngestedObject = (ConsumableObject)
-                    ingestedObject.halfObject.GetComponent(typeof(ConsumableObject));
-                if (halfIngestedObject.ObjectVolume < (stomachCapacity - DigestiveCapacityOccupied))
-                {
-                    energyDigesting += halfIngestedObject.EnergyContent;
-                    waterDigesting += halfIngestedObject.ObjectVolume * (ingestedObject.liquidProportion);
-                    solidsDigesting += halfIngestedObject.ObjectVolume * (1 - ingestedObject.liquidProportion);
-                    return IngestionResult.IngestedHalf;
-                }
+                energyDigesting += ingestedObject.EnergyContent / 2;
+                waterDigesting += (ingestedObject.ObjectVolume * ingestedObject.liquidProportion) / 2;
+                solidsDigesting += (ingestedObject.ObjectVolume * (1 - ingestedObject.liquidProportion)) / 2;
+                return IngestionResult.IngestedHalfContents;
+            }
+            else if (ingestedObject.ObjectVolume / 4 < FreeStomachCapacity)
+            {
+                energyDigesting += ingestedObject.EnergyContent / 4;
+                waterDigesting += (ingestedObject.ObjectVolume * ingestedObject.liquidProportion) / 4;
+                solidsDigesting += (ingestedObject.ObjectVolume * (1 - ingestedObject.liquidProportion)) / 4;
+                return IngestionResult.IngestedQuarterContents;
+            }
+        }
+        else if (ingestedObject.ObjectVolume < FreeStomachCapacity)
+        {
+            energyDigesting += ingestedObject.EnergyContent;
+            waterDigesting += ingestedObject.ObjectVolume * ingestedObject.liquidProportion;
+            solidsDigesting += ingestedObject.ObjectVolume * (1 - ingestedObject.liquidProportion);
+            return IngestionResult.IngestedAll;
+        }
+        else if (ingestedObject.isHalfable)
+        {
+            ConsumableObject halfIngestedObject = (ConsumableObject)
+                ingestedObject.halfObject.GetComponent(typeof(ConsumableObject));
+            if (halfIngestedObject.ObjectVolume < (stomachCapacity - DigestiveCapacityOccupied))
+            {
+                energyDigesting += halfIngestedObject.EnergyContent;
+                waterDigesting += halfIngestedObject.ObjectVolume * (ingestedObject.liquidProportion);
+                solidsDigesting += halfIngestedObject.ObjectVolume * (1 - ingestedObject.liquidProportion);
+                return IngestionResult.IngestedHalf;
             }
         }
         return IngestionResult.IngestedNone;
