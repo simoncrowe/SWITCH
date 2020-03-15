@@ -8,15 +8,21 @@ public class HadMakeFoodSubsequentTimes : MonoBehaviour
     public float potFoodEnergyJ = 2492624f;
     public Metabolism manMetabolism;
     public Metabolism hadMetabolism;
-    public AudioClip ingesdtPotFoodClip;
+    public AudioClip ingestPotFoodClip;
     public HadMakeFoodFirstTime makeFoodFirstTimeScript;
+
+    public List<string> makeFoodDialogueNodes;
 
     private SimpleConsumable potFood;
 
     void Start()
     {
         potFood = new SimpleConsumable(0, 0);
-        EventManager.StartListening("dialogue_5", InitiateAction);
+
+        for (int i = 0; i < makeFoodDialogueNodes.Count; i++)
+        {
+            EventManager.StartListening("dialogue_" + makeFoodDialogueNodes[i], InitiateAction);
+        }
     }
 
     void InitiateAction()
@@ -211,13 +217,13 @@ public class HadMakeFoodSubsequentTimes : MonoBehaviour
     {
         EventManager.StopListening("had_arrives_at_front_of_wheelchair", HadFeedMan);
         potFood = manMetabolism.IngestSimple(new SimpleConsumable(potFoodVolume, potFoodEnergyJ),
-                                                                          ingesdtPotFoodClip);
+                                                                          ingestPotFoodClip);
         Invoke("HadFeedSelf", 3f);
     }
 
     void HadFeedSelf()
     {
-        potFood = hadMetabolism.IngestSimple(potFood, ingesdtPotFoodClip);
+        potFood = hadMetabolism.IngestSimple(potFood, ingestPotFoodClip);
         EventManager.TriggerEvent("had_has_fed_man_and_food_finshed");
     }
 }

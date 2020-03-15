@@ -929,13 +929,13 @@ MonoBehaviour:
   suspendConversationOptionText: 
   firstKey: 0
   resumptionNodeKey: 
-  hungerNodeKey: 
+  hungerNodeKey: R
   deathNodeKey: 
   conversing: 0
   dialogueData: {fileID: 4900000, guid: 5b9fbde2432b15042961bf6583efa59a, type: 3}
   customSkin: {fileID: 11400000, guid: 6d13732c57495b34ca9b913741fc3ab5, type: 2}
-  manFedAndFoodFinishedNodeId: 
-  manFedAndFoodNotFinishedNodeId: 
+  manFedAndFoodFinishedNodeId: P
+  manFedAndFoodNotFinishedNodeId: Q
 --- !u!1 &97
 GameObject:
   m_ObjectHideFlags: 0
@@ -1629,6 +1629,7 @@ GameObject:
   - component: {fileID: 571838849}
   - component: {fileID: 571838850}
   - component: {fileID: 571838851}
+  - component: {fileID: 571838853}
   - component: {fileID: 571838852}
   m_Layer: 2
   m_Name: Actions
@@ -1680,7 +1681,9 @@ MonoBehaviour:
   potFoodEnergyJ: 2492624
   manMetabolism: {fileID: 17}
   hadMetabolism: {fileID: 90}
-  ingesdtPotFoodClip: {fileID: 0}
+  ingestPotFoodClip: {fileID: 8300000, guid: eafdb671d7912fb4badc63789f74d4f3, type: 3}
+  makeFoodDialogueNodes:
+  - O
 --- !u!114 &571838852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1702,6 +1705,26 @@ MonoBehaviour:
   wheelcharTurnDuration: 3
   wheelchairExitedPostion: {x: 0.06, y: 0.464, z: 2.473}
   wheelchairExitDuration: 7
+--- !u!114 &571838853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 571838848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f4b5023df4319d4fa2ff380e7656edb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  potFoodVolume: 0.0012
+  potFoodEnergyJ: 2492624
+  manMetabolism: {fileID: 17}
+  hadMetabolism: {fileID: 90}
+  ingestPotFoodClip: {fileID: 8300000, guid: eafdb671d7912fb4badc63789f74d4f3, type: 3}
+  makeFoodFirstTimeScript: {fileID: 571838851}
+  makeFoodDialogueNodes:
+  - O
 --- !u!1 &575143706
 GameObject:
   m_ObjectHideFlags: 0

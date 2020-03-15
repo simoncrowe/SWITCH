@@ -8,7 +8,9 @@ public class HadMakeFoodFirstTime : MonoBehaviour
     public float potFoodEnergyJ = 2492624f;
     public Metabolism manMetabolism;
     public Metabolism hadMetabolism;
-    public AudioClip ingesdtPotFoodClip;
+    public AudioClip ingestPotFoodClip;
+
+    public List<string> makeFoodDialogueNodes;
 
     private SimpleConsumable potFood;
 
@@ -17,7 +19,12 @@ public class HadMakeFoodFirstTime : MonoBehaviour
     void Start()
     {
         FoodMade = false;
-        EventManager.StartListening("dialogue_5", InitiateAction);
+
+        for (int i = 0; i < makeFoodDialogueNodes.Count; i++)
+        {
+            EventManager.StartListening("dialogue_" + makeFoodDialogueNodes[i], InitiateAction);
+        }
+
     }
 
     void InitiateAction()
@@ -240,7 +247,13 @@ public class HadMakeFoodFirstTime : MonoBehaviour
     {
         EventManager.StopListening("contents_of_pot_is_cooked", TurnOffHob);
         EventManager.TriggerEvent("turn_off_hob");
-        Invoke("TakeFoodToMan", 0.7f);
+        Invoke("HadFeedSelf", 2f);
+    }
+    void HadFeedSelf()
+    {
+        FoodMade = true;
+        potFood = hadMetabolism.IngestSimple(new SimpleConsumable(potFoodVolume, potFoodEnergyJ), ingestPotFoodClip);
+        Invoke("TakeFoodToMan", 1.7f);
     }
 
     void TakeFoodToMan()
@@ -252,15 +265,8 @@ public class HadMakeFoodFirstTime : MonoBehaviour
     void HadFeedMan()
     {
         EventManager.StopListening("had_arrives_at_front_of_wheelchair", HadFeedMan);
-        potFood = manMetabolism.IngestSimple(new SimpleConsumable(potFoodVolume, potFoodEnergyJ),
-                                                                          ingesdtPotFoodClip);
-        Invoke("HadFeedSelf", 3f);
-    }
+        potFood = manMetabolism.IngestSimple(potFood, ingestPotFoodClip);
 
-    void HadFeedSelf()
-    {
-        potFood = hadMetabolism.IngestSimple(potFood, ingesdtPotFoodClip);
-        FoodMade = true;
         EventManager.TriggerEvent("had_has_fed_man_and_food_finshed");
     }
 }
